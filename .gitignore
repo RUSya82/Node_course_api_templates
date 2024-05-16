@@ -1,0 +1,10 @@
+.idea
+*.iml
+out
+gen
+/dist
+/node_modules
+/.clinic
+/.env
+/prisma/dev.db
+/prisma/dev.db-journal
