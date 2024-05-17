@@ -6,17 +6,27 @@ const morgan = require('morgan');
 const methodOverride = require('method-override');
 const createPath = require('./helpers/createPath');
 const DBService = require('./database/dbservice');
+const ConfigService = require('./config/configService');
 class App{
     _app;
     _port;
+    _dbUser;
+    _dbPassword;
 
     _dbService;
     _hostName;
+    _database;
+
+    _configService;
     constructor() {
         this._app = express();
-        this._port = 3000;
-        this._dbService = new DBService();
-        this._hostName = '127.0.0.1';
+        this._configService = new ConfigService();
+        this._port = this._configService.get('PORT');
+        this._hostName = this._configService.get('HOST');
+        this._dbUser = this._configService.get('DBUSER');
+        this._dbPassword = this._configService.get('DBPASS');
+        this._database = this._configService.get('DATABASE');
+        this._dbService = new DBService(this._database, this._dbUser, this._dbPassword);
     }
     useMiddlewares(){
         this._app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
