@@ -7,26 +7,22 @@ const methodOverride = require('method-override');
 const createPath = require('./helpers/createPath');
 const DBService = require('./database/dbservice');
 const ConfigService = require('./config/configService');
+const LoggerService = require('./logger/loggerService');
 class App{
     _app;
     _port;
-    _dbUser;
-    _dbPassword;
-
     _dbService;
     _hostName;
-    _database;
-
     _configService;
+    _logger;
+    _prefix = '[APP]'
     constructor() {
         this._app = express();
-        this._configService = new ConfigService();
+        this._configService = ConfigService.getInstance();
         this._port = this._configService.get('PORT');
         this._hostName = this._configService.get('HOST');
-        this._dbUser = this._configService.get('DBUSER');
-        this._dbPassword = this._configService.get('DBPASS');
-        this._database = this._configService.get('DATABASE');
-        this._dbService = new DBService(this._database, this._dbUser, this._dbPassword);
+        this._dbService = DBService.getInstance();
+        this._logger = LoggerService.getInstance();
     }
     useMiddlewares(){
         this._app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
@@ -55,9 +51,9 @@ class App{
         await this._dbService.connect();
         this._app.listen(this._port, (error) => {
             if(error){
-                console.log(error)
+                this._logger.error(error, this._prefix)
             } else {
-                console.log(`Server running at http://${this._hostName}:${this._port}/`)
+                this._logger.log(`Server running at http://${this._hostName}:${this._port}/`, this._prefix)
             }
         });
     }

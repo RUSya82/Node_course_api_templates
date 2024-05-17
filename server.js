@@ -1,12 +1,16 @@
-const App = require('./app')
+const App = require('./app');
+const LoggerService = require('./logger/loggerService');
+
+const logger = LoggerService.getInstance();
+const prefix = '[MAIN]';
 
 async function bootstrap(){
     const app = new App();
     try{
         await app.init();
-        console.log('[MAIN] App init successfully')
+        logger.log('App init successfully', prefix)
     } catch (e){
-        console.log('[MAIN] Error App init: ' + e.message)
+        logger.error('Error App init: ' + e.message, prefix)
     }
 
 }
