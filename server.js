@@ -3,9 +3,10 @@ const morgan = require('morgan');
 const mongoose = require('mongoose');
 const methodOverride = require('method-override');
 const createPath = require('./helpers/createPath');
-const postRouter = require("./routers/post-router")
-const contactsRouter = require("./routers/contact-router");
-const apiPostRouter = require("./routers/api-post-router");
+const { apiPostRoutes} = require("./routers/api-post-router");
+const contactRoutes = require('./routers/contact-router')
+const postRoutes = require('./routers/post-router')
+const bindRoutes = require('./helpers/bindRoutes')
 
 
 const port = 3000;
@@ -36,17 +37,19 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms'))
 app.use(express.urlencoded({ extended: false }));
 app.use(methodOverride('_method'));
 
-app.use(express.static('styles'))
+app.use(express.static('public'))
 
 app.get('/', (req, res) => {
     const title = 'Home';
     res.render(createPath('index'), {title});
 })
 
-app.use(postRouter);
-app.use(contactsRouter);
-app.use(express.json());
-app.use(apiPostRouter);
+// app.use(postRouter);
+
+bindRoutes(apiPostRoutes, app, '/api');
+bindRoutes(contactRoutes, app);
+bindRoutes(postRoutes, app);
+// app.use('/api' ,apiPostRouter);
 app.get('/about-us', (req, res) => {
     res.redirect('contacts')
 });

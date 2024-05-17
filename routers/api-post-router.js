@@ -1,10 +1,47 @@
 const express = require('express');
 const {getPosts,getPost,deletePost,postAddPost, editPost} = require("../controllers/api-post-conroller");
-const router = express.Router();
+// const apiPostRouter = express.Router();
 
-router.get('/api/posts/:id', getPost);
-router.get('/api/posts', getPosts);
-router.delete('/api/posts/:id', deletePost);
-router.post('/api/add-post', postAddPost);
-router.put('/api/edit/:id', editPost);
-module.exports = router;
+// apiPostRouter.use(express.json());
+
+const routeMiddlewares = [express.json()]
+
+const apiPostRoutes = [
+    {
+        path: '/posts/:id',
+        method: 'get',
+        handler: getPost,
+        middlewares: [...routeMiddlewares]
+    },
+    {
+        path: '/posts',
+        method: 'get',
+        handler: getPosts,
+        middlewares: [...routeMiddlewares]
+    },
+    {
+        path: '/posts/:id',
+        method: 'delete',
+        handler: deletePost,
+        middlewares: [...routeMiddlewares]
+    },
+    {
+        path: '/add-post',
+        method: 'post',
+        handler: postAddPost,
+        middlewares: [...routeMiddlewares]
+    },
+    {
+        path: '/edit/:id',
+        method: 'put',
+        handler: editPost,
+        middlewares: [...routeMiddlewares]
+    },
+]
+
+// apiPostRouter.get('/posts/:id', getPost);
+// apiPostRouter.get('/posts', getPosts);
+// apiPostRouter.delete('/posts/:id', deletePost);
+// apiPostRouter.post('/add-post', postAddPost);
+// apiPostRouter.put('/edit/:id', editPost);
+module.exports = {apiPostRoutes} ;

@@ -10,15 +10,51 @@ const {
     postAddPost
 } = require("../controllers/post-controller");
 
+const routeMiddlewares = []
 
-router.get('/posts/:id', getPost);
-router.get('/edit/:id', getEditPost);
+const postRoutes = [
+    {
+        path: '/posts/:id',
+        method: 'get',
+        handler: getPost,
+        middlewares: [...routeMiddlewares]
+    },
+    {
+        path: '/edit/:id',
+        method: 'get',
+        handler: getEditPost,
+        middlewares: [...routeMiddlewares]
+    },
+    {
+        path: '/edit/:id',
+        method: 'put',
+        handler: editPost,
+        middlewares: [...routeMiddlewares]
+    },
+    {
+        path: '/posts',
+        method: 'get',
+        handler: getPosts,
+        middlewares: [...routeMiddlewares]
+    },
+    {
+        path: '/posts/:id',
+        method: 'delete',
+        handler: deletePost,
+        middlewares: [...routeMiddlewares]
+    },
+    {
+        path: '/add-post',
+        method: 'get',
+        handler: getAddPost,
+        middlewares: [...routeMiddlewares]
+    },
+    {
+        path: '/add-post',
+        method: 'post',
+        handler: postAddPost,
+        middlewares: [...routeMiddlewares]
+    },
+]
 
-router.put('/edit/:id', editPost);
-
-router.get('/posts', getPosts);
-router.delete('/posts/:id', deletePost);
-router.get('/add-post', getAddPost);
-router.post('/add-post', postAddPost);
-
-module.exports = router;
+module.exports = postRoutes;
