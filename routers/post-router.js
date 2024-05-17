@@ -1,5 +1,6 @@
 const express = require('express');
-const router = express.Router();
+const postRouter = express.Router();
+const bindRoutes = require('../helpers/bindRoutes')
 const {
     getPost,
     getEditPost,
@@ -57,4 +58,6 @@ const postRoutes = [
     },
 ]
 
-module.exports = postRoutes;
+bindRoutes(postRoutes, postRouter);
+
+module.exports = postRouter;

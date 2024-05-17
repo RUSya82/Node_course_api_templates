@@ -1,5 +1,6 @@
 const express = require('express');
-const router = express.Router();
+const contactRouter = express.Router();
+const bindRoutes = require('../helpers/bindRoutes')
 const {getContacts} = require("../controllers/contact-controller");
 // const {getPost, getPosts, deletePost, postAddPost, editPost} = require("../controllers/api-post-conroller");
 
@@ -14,5 +15,6 @@ const contactsRoutes = [
         middlewares: [...routeMiddlewares]
     }
 ]
+bindRoutes(contactsRoutes, contactRouter)
 
-module.exports = contactsRoutes;
+module.exports = contactRouter;

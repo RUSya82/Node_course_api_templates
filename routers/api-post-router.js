@@ -1,5 +1,7 @@
 const express = require('express');
 const {getPosts,getPost,deletePost,postAddPost, editPost} = require("../controllers/api-post-conroller");
+const apiPostRouter = express.Router();
+const bindRoutes = require('../helpers/bindRoutes')
 // const apiPostRouter = express.Router();
 
 // apiPostRouter.use(express.json());
@@ -44,4 +46,5 @@ const apiPostRoutes = [
 // apiPostRouter.delete('/posts/:id', deletePost);
 // apiPostRouter.post('/add-post', postAddPost);
 // apiPostRouter.put('/edit/:id', editPost);
-module.exports = {apiPostRoutes} ;
+bindRoutes(apiPostRoutes, apiPostRouter)
+module.exports = apiPostRouter ;
