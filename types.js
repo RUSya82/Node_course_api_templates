@@ -6,5 +6,6 @@ const TYPES = {
     ContactsService: Symbol.for('ContactsService'),
     PostController: Symbol.for('PostController'),
     ApiPostController: Symbol.for('ApiPostController'),
+    PostService: Symbol.for('PostService'),
 }
 module.exports = {TYPES};

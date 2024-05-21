@@ -8,6 +8,7 @@ const ContactController = require('./controllers/contact.controller');
 const ContactsService = require('./services/contacts.service');
 const PostController = require('./controllers/post.controller');
 const ApiPostController = require('./controllers/apiPost.controller');
+const PostService = require('./services/post.service')
 
 
 const prefix = '[MAIN]';
@@ -18,8 +19,9 @@ serviceContainer.bind(TYPES.DBService, DBService, true);
 serviceContainer.bind(TYPES.LoggerService, LoggerService, true);
 serviceContainer.bind(TYPES.ContactController, ContactController, true);
 serviceContainer.bind(TYPES.ContactsService, ContactsService, true);
+serviceContainer.bind(TYPES.PostService, PostService, true);
 serviceContainer.bind(TYPES.PostController, PostController, true);
-serviceContainer.bind(TYPES.ApiPostController, ApiPostController, true);
+serviceContainer.bind(TYPES.ApiPostController, ApiPostController);
 
 const logger = serviceContainer.get(TYPES.LoggerService);
 

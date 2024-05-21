@@ -1,12 +1,15 @@
 const BaseController = require('../common/base.controller')
-const Post = require("../models/post");
 const express = require("express");
+const {TYPES} = require("../types");
 
 class ApiPostController extends BaseController{
+
+    _service;
     constructor() {
         super();
         this.routeMiddlewares = [express.json()];
         this.bindRoutes(this.routes);
+        this._service = this._serviceContainer.get(TYPES.PostService);
     }
     routes = [
         {
@@ -44,48 +47,51 @@ class ApiPostController extends BaseController{
         res.status(500).send(error.message);
     }
 
-    getPost (req, res) {
-        Post
-            .findById(req.params.id)
-            .then(post => res.status(200).json(post))
-            .catch((error) => this.handleError(res, error))
+    async getPost (req, res) {
+        try{
+            const post = await this._service.getOne(req.params.id);
+            res.status(200).json(post)
+        } catch (error){
+            this.handleError(res, error);
+        }
     };
 
-    getPosts (req, res) {
-        Post
-            .find()
-            .sort({createdAt: -1})
-            .then(posts => res.status(200).json(posts))
-            .catch((error) => this.handleError(res, error))
+    async getPosts (req, res) {
+        try{
+            const posts = await this._service.getAll();
+            res.status(200).json(posts)
+        } catch (error){
+            this.handleError(res, error);
+        }
     }
-    deletePost (req, res) {
+    async deletePost (req, res) {
         const { id } = req.params;
-        Post
-            .findByIdAndDelete(id)
-            .then((post) => {
-                res.status(200).json(id);
-            })
-            .catch((error) => this.handleError(res, error));
+        try{
+            const deletedPost = await this._service.deleteOne(id);
+            res.status(200).json(deletedPost)
+        } catch (error){
+            this.handleError(res, error);
+        }
     }
 
-    postAddPost (req, res) {
-        const { title, author, text } = req.body;
-        console.log(title, author, text)
-        const post = new Post({ title, author, text });
-        post
-            .save()
-            .then((result) => {
-                res.status(200).json(result);
-            })
-            .catch((error) => this.handleError(res, error));
+    async postAddPost (req, res) {
+        try{
+            const result = await this._service.create(req.body);
+            this._logger.log(result);
+            res.status(200).json(result);
+        } catch (error) {
+            this.handleError(res, error)
+        }
     }
-    editPost (req, res) {
+    async editPost (req, res) {
         const { title, author, text } = req.body;
         const { id } = req.params;
-        Post
-            .findByIdAndUpdate(id, {title, author, text}, { new: true })
-            .then((result) => res.status(200).json(result))
-            .catch((error) => this.handleError(res, error));
+        try {
+            const result = await this._service.updateOne(id, {title, author, text});
+            res.status(200).json(result)
+        } catch (error){
+            this.handleError(res, error)
+        }
     }
 }
 module.exports = ApiPostController;

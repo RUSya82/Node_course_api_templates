@@ -5,12 +5,11 @@ class ContactsService{
         this._model = Contacts;
     }
     async getAll(){
-            const contacts = await this._model.find();
-            if(!contacts){
-                return false;
-            }
-            return contacts;
-
+        try{
+            return await this._model.find();
+        } catch (e) {
+            throw new Error(e.message)
+        }
     }
 
 }

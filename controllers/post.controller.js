@@ -1,11 +1,14 @@
 const BaseController = require('../common/base.controller')
 const createPath = require('../helpers/createPath');
-const Post = require("../models/post");
-class PostController extends BaseController{
+const {TYPES} = require("../types");
+
+class PostController extends BaseController {
+    _service;
+
     constructor(props) {
         super(props);
         this.bindRoutes(this.routes);
-
+        this._service = this._serviceContainer.get(TYPES.PostService);
     }
 
     routes = [
@@ -52,77 +55,73 @@ class PostController extends BaseController{
             middlewares: []
         },
     ];
-    getPost (req, res) {
+
+    async getPost(req, res) {
         const title = 'Post';
-        Post
-            .findById(req.params.id)
-            .then(post => res.render(createPath('post'), {title, post}))
-            .catch((error) => {
-                console.log(error);
-                res.render(createPath('error'), {title: 'Error'});
-            })
-    }
-    getEditPost (req, res) {
-        const title = 'Post';
-        Post
-            .findById(req.params.id)
-            .then(post => res.render(createPath('edit-post'), { title, post }))
-            .catch((error) => {
-                console.log(error);
-                res.render(createPath('error'), { title: 'Error' });
-            })
-    }
-    editPost (req, res) {
-        const { title, author, text } = req.body;
-        const { id } = req.params;
-        Post
-            .findByIdAndUpdate(id, {title, author, text})
-            .then((result) => res.redirect(`/posts/${id}`))
-            .catch((error) => {
-                console.log(error);
-                res.render(createPath('error'), { title: 'Error' });
-            })
-    }
-    getPosts (req, res) {
-        const title = 'Posts';
-        Post
-            .find()
-            .sort({createdAt: -1})
-            .then(posts => res.render(createPath('posts'), { title, posts }))
-            .catch((error) => {
-                console.log(error);
-                res.render(createPath('error'), { title: 'Error' });
-            })
-    }
-    deletePost(req, res){
-        const title = 'Posts';
-        Post
-            .findByIdAndDelete(req.params.id)
-            .then(result => res.sendStatus(200))
-            .catch((error) => {
-                console.log(error);
-                res.render(createPath('error'), { title: 'Error' });
-            })
-    }
-    getAddPost (req, res) {
-        const title = 'Add Post';
-        res.render(createPath('add-post'), { title });
+        try {
+            const post = await this._service.getOne(req.params.id);
+            res.render(createPath('post'), {title, post});
+        } catch (error) {
+            this.handleError(res, error)
+        }
     }
 
-    postAddPost (req, res)  {
-        const { title, author, text } = req.body;
-        const post = new Post({ title, author, text });
-        post
-            .save()
-            .then((result) => {
-                console.log(result)
-                res.redirect('/posts')
-            })
-            .catch((error) => {
-                console.log(error);
-                res.render(createPath('error'), { title: 'Error' });
-            })
+    async getEditPost(req, res) {
+        const title = 'Post';
+        try {
+            const post = await this._service.getOne(req.params.id);
+            res.render(createPath('edit-post'), {title, post});
+        } catch (error) {
+            this.handleError(res, error)
+        }
+    }
+
+    async editPost(req, res) {
+        const {title, author, text} = req.body;
+        const {id} = req.params;
+        try {
+            await this._service.updateOne(id, {title, author, text});
+            res.redirect(`/posts/${id}`)
+        } catch (error){
+            this.handleError(res, error)
+        }
+    }
+
+    async getPosts(req, res) {
+        const title = 'Posts';
+        try{
+            const posts = await this._service.getAll();
+            res.render(createPath('posts'), {title, posts})
+        } catch (error) {
+            this.handleError(res, error)
+        }
+    }
+
+    async deletePost(req, res) {
+        const title = 'Posts';
+        try{
+            const id = await this._service.deleteOne(req.params.id);
+            res.sendStatus(200)
+        } catch (error) {
+            this.handleError(res, error)
+        }
+    }
+
+    getAddPost(req, res) {
+        const title = 'Add Post';
+        res.render(createPath('add-post'), {title});
+    }
+
+    async postAddPost(req, res) {
+        try{
+            const newPost = await this._service.create(req.body);
+            this._logger.log(newPost);
+            res.redirect('/posts')
+        } catch (error) {
+            this.handleError(res, error)
+        }
     }
 
 }
+
 module.exports = PostController;
