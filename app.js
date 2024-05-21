@@ -5,9 +5,7 @@ const postRouter = require('./routers/post-router');
 const morgan = require('morgan');
 const methodOverride = require('method-override');
 const createPath = require('./helpers/createPath');
-const DBService = require('./database/dbservice');
-const ConfigService = require('./config/configService');
-const LoggerService = require('./logger/loggerService');
+const {TYPES} = require('./types');
 class App{
     _app;
     _port;
@@ -15,14 +13,16 @@ class App{
     _hostName;
     _configService;
     _logger;
-    _prefix = '[APP]'
-    constructor() {
+    _prefix = '[APP]';
+    _serviceContainer;
+    constructor(serviceContainer) {
         this._app = express();
-        this._configService = ConfigService.getInstance();
+        this._serviceContainer = serviceContainer;
+        this._configService = this._serviceContainer.get(TYPES.ConfigService);
         this._port = this._configService.get('PORT');
         this._hostName = this._configService.get('HOST');
-        this._dbService = DBService.getInstance();
-        this._logger = LoggerService.getInstance();
+        this._dbService = this._serviceContainer.get(TYPES.DBService);
+        this._logger = this._serviceContainer.get(TYPES.LoggerService);
     }
     useMiddlewares(){
         this._app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));

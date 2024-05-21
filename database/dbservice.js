@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-const ConfigService = require('../config/configService');
-const LoggerService = require('../logger/loggerService');
+const ServiceContainer = require('../containers/serviceContainer')
+const {TYPES} = require("../types");
 class DBService{
     _dbUser;
     _dbPassword;
@@ -11,8 +11,9 @@ class DBService{
     static instance = null;
 
     constructor() {
-        this._configService = ConfigService.getInstance();
-        this._logger = LoggerService.getInstance();
+        this.serviceContainer = ServiceContainer.getInstance();
+        this._configService = this.serviceContainer.get(TYPES.ConfigService)
+        this._logger = this.serviceContainer.get(TYPES.LoggerService);
         this._dbUser = this._configService.get('DBUSER');
         this._dbPassword = this._configService.get('DBPASS');
         this._database = this._configService.get('DATABASE');
