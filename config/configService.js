@@ -1,5 +1,7 @@
 const dotenv = require('dotenv');
 const LoggerService = require('../logger/loggerService');
+const ServiceContainer = require("../containers/serviceContainer");
+const {TYPES} = require("../types");
 
 class ConfigService{
     _result;
@@ -10,7 +12,8 @@ class ConfigService{
     static instance = null;
     constructor() {
         this._result = dotenv.config();
-        this._logger = LoggerService.getInstance();
+        this.serviceContainer = ServiceContainer.getInstance();
+        this._logger = this.serviceContainer.get(TYPES.LoggerService)
         if(!this._result){
             this._logger.error("Can't read file .env", this._prefix);
         } else {
@@ -18,14 +21,6 @@ class ConfigService{
         }
         this._config = this._result.parsed;
 
-    }
-    static getInstance(){
-        if(!ConfigService.instance){
-            ConfigService.instance = new ConfigService();
-            return ConfigService.instance
-        } else {
-            return  ConfigService.instance;
-        }
     }
 
     get(key){

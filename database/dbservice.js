@@ -29,13 +29,5 @@ class DBService{
             this._logger.error('db ERROR ' + e.message, '[DBService] ');
         }
     }
-    static getInstance(){
-        if(!DBService.instance){
-            DBService.instance = new DBService();
-            return DBService.instance;
-        } else {
-            return DBService.instance;
-        }
-    }
 }
 module.exports = DBService;

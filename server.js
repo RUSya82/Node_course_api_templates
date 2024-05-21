@@ -4,6 +4,10 @@ const DBService = require('./database/dbservice');
 const ConfigService = require('./config/configService');
 const LoggerService = require('./logger/loggerService');
 const {TYPES} = require('./types');
+const ContactController = require('./controllers/contact.controller');
+const ContactsService = require('./services/contacts.service');
+const PostController = require('./controllers/post.controller');
+const ApiPostController = require('./controllers/apiPost.controller');
 
 
 const prefix = '[MAIN]';
@@ -12,6 +16,10 @@ const serviceContainer = ServiceContainer.getInstance();
 serviceContainer.bind(TYPES.ConfigService, ConfigService, true);
 serviceContainer.bind(TYPES.DBService, DBService, true);
 serviceContainer.bind(TYPES.LoggerService, LoggerService, true);
+serviceContainer.bind(TYPES.ContactController, ContactController, true);
+serviceContainer.bind(TYPES.ContactsService, ContactsService, true);
+serviceContainer.bind(TYPES.PostController, PostController, true);
+serviceContainer.bind(TYPES.ApiPostController, ApiPostController, true);
 
 const logger = serviceContainer.get(TYPES.LoggerService);
 

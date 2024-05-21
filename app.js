@@ -1,7 +1,4 @@
 const express = require('express');
-const apiPostRouter = require("./routers/api-post-router");
-const contactRouter = require('./routers/contact-router')
-const postRouter = require('./routers/post-router');
 const morgan = require('morgan');
 const methodOverride = require('method-override');
 const createPath = require('./helpers/createPath');
@@ -23,6 +20,9 @@ class App{
         this._hostName = this._configService.get('HOST');
         this._dbService = this._serviceContainer.get(TYPES.DBService);
         this._logger = this._serviceContainer.get(TYPES.LoggerService);
+        this._contactController = this._serviceContainer.get(TYPES.ContactController);
+        this._postController = this._serviceContainer.get(TYPES.PostController)
+        this._apiPostController = this._serviceContainer.get(TYPES.ApiPostController);
     }
     useMiddlewares(){
         this._app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
@@ -32,15 +32,21 @@ class App{
 
     }
     useRoutes(){
-        this._app.use(postRouter);
-        this._app.use(contactRouter);
-        this._app.use('/api' , apiPostRouter);
+        this._app.use(this._postController.router);
+        this._app.use(this._contactController.router);
+        this._app.use('/api' , this._apiPostController.router);
         this._app.get('/', (req, res) => {
             const title = 'Home';
             res.render(createPath('index'), {title});
         });
         this._app.get('/about-us', (req, res) => {
             res.redirect('contacts')
+        });
+        this._app.use((req, res) => {
+            const title = 'Error Page';
+            res
+                .status(404)
+                .render(createPath('error'), { title });
         });
     }
 
