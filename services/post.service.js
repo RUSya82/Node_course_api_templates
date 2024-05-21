@@ -8,6 +8,7 @@ class PostService{
         try{
             return await this._model.findById(id)
         } catch (e) {
+            console.log(e.message)
             throw new Error(e.message);
         }
     }
@@ -36,7 +37,7 @@ class PostService{
     }
     async create(body){
         try{
-            const post = new Post(body);
+            const post = new this._model(body);
             return await post.save();
 
         } catch (e) {
