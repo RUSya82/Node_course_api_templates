@@ -8,6 +8,7 @@ class BaseController{
     _serviceContainer;
 
     _logger;
+    _prefix = '[Controller errorHandler]'
 
     constructor() {
         this._router = express.Router();
@@ -26,7 +27,7 @@ class BaseController{
         }
     }
     handleError (res, error) {
-        this._logger.error(error);
+        this._logger.error(error, this._prefix);
         res.render(createPath('error'), { title: 'Error' });
     }
 }

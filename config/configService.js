@@ -17,7 +17,7 @@ class ConfigService{
         if(!this._result){
             this._logger.error("Can't read file .env", this._prefix);
         } else {
-            this._logger.log("Config loaded!", this._prefix);
+            this._logger.log("Config loaded!!!", this._prefix);
         }
         this._config = this._result.parsed;
 
